@@ -3,39 +3,52 @@
 
 using namespace std;
 
-void process_solution(int a[], int k, int m) {
-    for (int i = 1; i <= m; i++)
-        if (a[i])
-            printf("%d ", i);
+void process_solution(int a[], int k) {
+    for (int i = 0; i < k; i++)
+        printf("%d ", a[i]);
     puts("");
 }
 
-void construct_candidates(int a[], int k, int c[], int *nc) {
-    c[0] = true;
-    c[1] = false;
-    *nc = 2;
+void construct_candidates(int a[], int k, int n, int c[], int *nc, int m) {
+    int i;
+    bool in_perm[m];
+    for (i = 1; i <= m; i++) {
+        in_perm[i] = false;
+    }
+    int mx = 0;
+    for (i = 0; i < k; i++) {
+        in_perm[a[i]] = true;
+        mx = max(a[i], mx);
+    }
+    *nc = 0;
+    for (i = mx + 1; i <= m; i++) {
+        if (!in_perm[i]) {
+            c[*nc] = i;
+            *nc = *nc + 1;
+        }
+    }
 }
-
+int cnt=0;
 void backtrack(int a[], int k, int n, int m) {
-    int c[1];
+    int c[m];
     int nc;
     int i;
-    if (n == k - 1) {
-        process_solution(a, k, m);
+    if (n == k) {
+        process_solution(a, k);
     } else {
-        k = k + 1;
-        construct_candidates(a, k, c, &nc);
+        construct_candidates(a, k, n, c, &nc, m);
         for (i = 0; i < nc; i++) {
             a[k] = c[i];
-            backtrack(a, k, n, m);
+            backtrack(a, k + 1, n, m);
         }
     }
 }
 
 int main() {
-    int a, b;
-    cin >> a >> b;
-    int v[a];
-    backtrack(v, 0, a, b);
+    int a[10];
+    int n, m;
+    cin >> n >> m;
+    backtrack(a, 0, n, m);
+    cout<<cnt<<'\n';
     return 0;
 }
